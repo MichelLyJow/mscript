@@ -1,23 +1,37 @@
-local PlaceId = game.PlaceId
+local BLOX_FRUITS_SCRIPT = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/BloxFruits.lua"
 
-local Scripts = {
-    -- Blox Fruits (Sea1,Sea2,Sea3)
-    [2753915549] = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/BloxFruits.lua",
-    [4442272183] = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/BloxFruits.lua",
-    [7449423635] = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/BloxFruits.lua",
-    [] = "",
+local byPlaceId = {
+    [2753915549] = BLOX_FRUITS_SCRIPT,
+    [4442272183] = BLOX_FRUITS_SCRIPT,
+    [7449423635] = BLOX_FRUITS_SCRIPT,
 }
 
-local TargetScript = Scripts[PlaceId]
+local byGameId = {
+    [994732206] = BLOX_FRUITS_SCRIPT,
+}
 
-if TargetScript then
-    local success, err = pcall(function()
-        loadstring(game:HttpGet(TargetScript))()
-    end)
+local gameId = game.GameId
+while gameId == 0 and game.PlaceId == 0 do
+    task.wait()
+    gameId = game.GameId
+end
+
+local url = byGameId[gameId] or byPlaceId[game.PlaceId]
+
+if not url then
+    return
+end
+
+for i = 1, 3 do
+    local ok, source = pcall(game.HttpGet, game, url)
     
-    if not success then
-        warn("[Loader] Error: " .. tostring(err))
+    if ok and type(source) == "string" and source ~= "" then
+        local chunk = loadstring(source)
+        if chunk then
+            chunk()
+            return
+        end
     end
-else
-    warn("[Loader] Place ID " .. tostring(PlaceId) .. " tidak terdaftar!")
+    
+    task.wait(0.5)
 end
