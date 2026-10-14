@@ -1,9 +1,11 @@
 local BLOX_FRUITS_SCRIPT = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/BloxFruits.lua"
+local STEAL_AN_EGG_SCRIPT = "https://raw.githubusercontent.com/MichelLyJow/mscript/refs/heads/main/StealAnEgg.lua"
 
 local byPlaceId = {
     [2753915549] = BLOX_FRUITS_SCRIPT,
     [4442272183] = BLOX_FRUITS_SCRIPT,
     [7449423635] = BLOX_FRUITS_SCRIPT,
+    [107778070777162] = STEAL_AN_EGG_SCRIPT,
 }
 
 local byGameId = {
