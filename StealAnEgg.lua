@@ -6817,12 +6817,24 @@ do
 				n21 = 8
 			end
 
-			return math.max(n21, n20 * ((11 - math.clamp(p263, 1, 10)) / 6))
+			local level = math.clamp(p263, 1, 50)
+			local base = math.max(n21, n20 * ((11 - math.min(level, 10)) / 6))
+
+			if level > 10 then
+				base = math.max(0.4, base / (1 + (level - 10) / 8))
+			end
+
+			return base
 		end
 
 		do
+			t46._stealPollInterval = function(p263b, p263c)
+				local level = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 50)
+
+				return math.max(0.05, p263c / math.max(1, level / 5))
+			end
 			t46._resolveSettleSeconds = function(p264, p265)
-				local v1081 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 10)
+				local v1081 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 50)
 				local v1082 = p264.settleBonus and type(p265) == "table" and p264.settleBonus[p265.Uid]
 				local seconds = v1082 and v1082.untilAt > os.clock() and v1082.seconds or 0
 
@@ -9638,7 +9650,7 @@ do
 					if p412:_hasConfirmedCarry(Uid) then
 						if not p412:_recordShowsCarried(Uid) then
 							p412:_setStatus("Confirming carry record")
-							task.wait(0.25)
+							task.wait(p412:_stealPollInterval(0.25))
 
 							continue
 						end
@@ -9696,7 +9708,7 @@ do
 					if v1453.State == AreaEggs.States.Carried then
 						if v1453.CarrierUserId == LocalPlayer2.UserId then
 							p412:_setStatus("Confirming carry state")
-							task.wait(0.25)
+							task.wait(p412:_stealPollInterval(0.25))
 
 							continue
 						end
@@ -9757,7 +9769,7 @@ do
 							})
 
 							while not p412.destroyed and p412.enabled and p412.carryAttemptToken == carryAttemptToken and not p412:_hasConfirmedCarry(Uid) and not u1459 do
-								task.wait(0.25)
+								task.wait(p412:_stealPollInterval(0.25))
 							end
 
 							continue
@@ -9795,7 +9807,7 @@ do
 					u1448 = u1448 or os.clock() + v1449
 					p412.stats.lastResult = "Carry requested"
 					p412:_setStatus(lastCarryReject and "Waiting for carry · " .. lastCarryReject or "Waiting for carry confirmation")
-					task.wait(0.25)
+					task.wait(p412:_stealPollInterval(0.25))
 				end
 			end)
 		end
@@ -12110,7 +12122,7 @@ do
 					return
 				end
 
-				local v1726 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 10)
+				local v1726 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 50)
 
 				p486.lowSpeedOutcomes = p486.lowSpeedOutcomes or {}
 
@@ -12164,7 +12176,7 @@ do
 				end)
 
 				local v1734, v1735, v1736 = p488:recommendLowSpeedLevel()
-				local v1737 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 10)
+				local v1737 = math.clamp(tonumber(senaV4Config.StealHoldSeconds) or 5, 1, 50)
 				local lowSpeedAdvice = p488.lowSpeedAdvice
 
 				if lowSpeedAdvice and v1737 <= lowSpeedAdvice.to then
@@ -28725,60 +28737,6 @@ do
 			end
 		end
 
-		do
-			t24.RingEventLoop = function()
-				if not senaV4Config.IsRingEventRunning then
-					senaV4Config.IsRingEventRunning = true
-					task.spawn(function()
-						local cFrame = cFrameNew(544.76, 71.5, -416.48)
-						local cFrame2 = cFrameNew(602, 70.78, -372)
-						local cFrame3 = cFrameNew(5573, 70.77, -363)
-
-						local function v4514()
-							return not senaV4Config.AutoRingEvent or not v16()
-						end
-						local function v4515(p974)
-							if v4514() then
-								return false
-							end
-
-							local Character = LocalPlayer.Character
-							local HumanoidRootPart = Character and Character:FindFirstChild("HumanoidRootPart")
-							local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
-
-							if not HumanoidRootPart or not Humanoid then
-								task.wait(0.3)
-
-								return not v4514()
-							end
-
-							v232(HumanoidRootPart, Humanoid, p974, v4514, false, nil, true)
-
-							return not v4514()
-						end
-
-						while true do
-							if not v4514() and v4515(cFrame) then
-								if not v4515(cFrame2) then
-									break
-								elseif v4515(cFrame3) and v4515(cFrame2) then
-									continue
-								end
-
-								break
-							end
-
-							break
-						end
-
-						senaV4Config.IsRingEventRunning = false
-					end)
-
-					return
-				end
-			end
-		end
-
 		local v4519
 		local v4520
 		local v4521
@@ -28786,7 +28744,7 @@ do
 		local v4532, v4533, v4534, v4535, v4536, v4537, v4538, v4539, v4540, v4541
 		local v4542, v4543, v4544, v4545, v4546, v4547, v4548, v4549, v4550, v4551
 		local v4552, v4553, v4554, v4555, v4556, v4557, v4558, v4559, v4560, v4561
-		local v4562, runOnce, v4564, v4565, v4566, v4567, v4568, v4569, v4570, v4571
+		local v4562, runOnce, v4564, v4565, v4566, v4567, v4568, v4570, v4571
 		local v4572, v4573, v4574, v4575, v4576, v4577
 
 		do
@@ -29305,7 +29263,7 @@ do
 				end
 			end
 			v4527 = function(p982)
-				senaV4Config.StealHoldSeconds = math.clamp(math.floor((tonumber(p982) or 5) + 0.5), 1, 10)
+				senaV4Config.StealHoldSeconds = math.clamp(math.floor((tonumber(p982) or 5) + 0.5), 1, 50)
 			end
 			v4528 = function(p983)
 				senaV4Config.GodMode = p983 == true
@@ -29613,13 +29571,6 @@ do
 
 				if senaV4Config.AutoMutation then
 					task.spawn(t24.AutoMutationLoop)
-				end
-			end
-			v4569 = function(p1034)
-				senaV4Config.AutoRingEvent = p1034 == true
-
-				if senaV4Config.AutoRingEvent then
-					t24.RingEventLoop()
 				end
 			end
 			v4570 = function(p1035)
@@ -30152,12 +30103,6 @@ do
 				Default = false,
 				Callback = v4732(v4560)
 			})
-			t216.autoRingEvent = v4791:AddSection("Ring Event"):AddToggle({
-				Title = "Auto Ring Event",
-				Content = "Starts at the safe zone, then glides Forest -> Angels & Demons -> back to Forest on a loop. Turn off Auto Steal while using this.",
-				Default = false,
-				Callback = v4732(v4569)
-			})
 		end
 
 		do
@@ -30201,15 +30146,15 @@ do
 				Callback = v4732(v4536)
 			})
 
-			if (tonumber(senaV4Config.StealHoldSeconds) or 5) > 10 then
+			if (tonumber(senaV4Config.StealHoldSeconds) or 5) > 50 then
 				senaV4Config.StealHoldSeconds = 5
 			end
 
 			t216.stealHold = v4794:AddSlider({
-				Title = "Low Speed Multiplier",
-				Content = "For Low Speed User. Higher = faster grab, lower = safer. Lower it if steals keep failing.",
+				Title = "Steal Speed Multiplier",
+				Content = "Works for Low Speed and High Speed (Fly). Higher = faster grab, lower = safer. Lower it if steals keep failing.",
 				Min = 1,
-				Max = 10,
+				Max = 50,
 				Default = 5,
 				Increment = 1,
 				Callback = v4732(v4527)
@@ -31209,7 +31154,6 @@ do
 			v4904(t216.mutationRarity, v4572)
 			v4904(t216.mutationRetry, v4573)
 			v4904(t216.autoMutation, v4568)
-			v4904(t216.autoRingEvent, v4569)
 			v4904(t216.autoSell, v4574)
 			v4904(t216.autoSellEgg, v4575)
 			v4904(t216.stealPlayerRarities, v4735)
@@ -31244,7 +31188,6 @@ do
 					"AutoPlace",
 					"AutoHatch",
 					"AutoMutation",
-					"AutoRingEvent",
 					"AutoSell",
 					"AutoSellEgg",
 					"StealPlayers",
