@@ -157,7 +157,7 @@ local function fn2()
 	local Lib = ProxyLib.new()
 
 	local Window = Lib:CreateWindow({
-		Title = "Michel Script [ Release ]",
+		Title = "Michel Script [ V1.0 ]",
 		Subtitle = "Blox Fruits",
 		Size = Vector2.new(540, 340),
 		MinSize = Vector2.new(460, 300),
