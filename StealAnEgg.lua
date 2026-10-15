@@ -29981,7 +29981,7 @@ do
 
 			v4730()
 			v4742 = SenaLibOverride:Window({
-				Title = "Michel Script [ Release ]",
+				Title = "Michel Script [ V1.0 ]",
 				Subtitle = "Steal An Egg",
 				Size = Vector2.new(540, 340),
 				MinSize = Vector2.new(460, 300),
